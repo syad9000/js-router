@@ -28,9 +28,9 @@
 		var listeners = [];
 		var params = {};
 		var regex = null;
-		
 		// If there were only two arguments passed in, assume we are using the second one
 		// as the controller.
+		
 		if (typeof templateId === 'function') {
 			controller = templateId;
 			templateId = null;
@@ -38,8 +38,7 @@
 		
 		if (typeof controller === "undefined")
 			controller = function(){};
-		
-		
+			
 		if (path.indexOf(":") > -1) {
 			regex = path;
 		}
@@ -55,8 +54,7 @@
 			controller: controller, 
 			onRefresh: listeners.push.bind(listeners),
 			regex : regex,
-			params : params,
-			html : null
+			params : params
 		};
 	}
 	function forEachEventElement(fnName) {
@@ -113,7 +111,6 @@
 				} 
 			}
 		} else route = routes[url];
-
 		// Set route params
 		route.controller.prototype.$set("params", JSON.stringify(this.params));
 		// Lazy load view element:
@@ -122,22 +119,39 @@
 		removeEventListeners();
 		// Clear events, to prepare for next render:
 		events = [];
-		console.log(routes, route.html);
 		// Do we have a controller:
 		if (route && route.controller) {
+			var template;
 			var ctrl = new route.controller();
-			if (!app || !route.templateId) {
+			
+			if(ctrl.template){
+				template = ctrl.template;			
+			} else {
+				template = document.getElementById(route.templateId).innerHTML;
+			}
+			if (!app) {
 					// If there's nothing to render, abort:
 				return;
 			}
 			// Listen on route refreshes:
 			route.onRefresh(function () {
 				removeEventListeners();
-				app.innerHTML = tmpl.render(
-					document.getElementById(route.templateId).innerHTML, 
-					ctrl
-				);
-				addEventListeners();
+				if(typeof template === "object"){
+					template.done(function(data){
+						app.innerHTML = tmpl.render(
+							data, 
+							ctrl
+						);
+						addEventListeners();
+					});
+					
+				} else {
+					app.innerHTML = tmpl.render(
+						template, 
+						ctrl
+					);
+					addEventListeners();
+				}
 			});
 			// Trigger the first refresh:
 			ctrl.$refresh();
