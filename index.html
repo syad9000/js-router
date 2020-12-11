@@ -11,7 +11,7 @@
 	</style>
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"/>
 	<link rel="manifest" href="manifest.json"/>
-	<link rel="icon" href="/bootstrap/favicon.ico"/>
+	
     <title>Vanilla JS Router with Mustache Templates</title>
   </head>
   <body>
@@ -64,16 +64,14 @@
     /** Router ---dependent on MustacheJS--- **/
 	//!function(e){var t={},r=[],n=document.getElementById("app"),a={on:function(e,t,n){r.push([e,t,n])},refresh:function(e){e.forEach(function(e){e()})},set:function(e,t){localStorage.setItem(e,t)},get:function(e){return JSON.parse(localStorage.getItem(e))}};function o(e){r.forEach(function(t,r){n.querySelectorAll(t[0]).forEach(function(r,n){r[e].apply(r,t.slice(1))})})}function i(){o("removeEventListener")}function s(){var a=null;if(this.match_arr=null,this.url=location.hash.slice(1)||"/",this.url_arr=this.url.split("/").filter(function(e){return e}),this.params={},this.params_regex=/(:\w+)/g,this.url_matches_pattern=function(e,t){var r;return"/"!==t&&"*"!=t&&(r=new RegExp(t.replace(/(:\w+)/g,"([\\w-]+)")),this.match_arr=e.match(r),!(!match_arr||match_arr[0]!==match_arr.input))},void 0===t[this.url]){for(var s in a=t["*"],t)if(t[s].regex&&this.url_matches_pattern(this.url,s)){var c=s.match(this.params_regex);if(a=t[s],c){this.match_arr.shift();for(var l=0;l<c.length;l++)this.params[c[l].slice(1)]=this.match_arr[l]}}}else a=t[url];if(a.controller.prototype.$set("params",JSON.stringify(this.params)),i(),r=[],a&&a.controller){var h=new a.controller;if(!n||!a.templateId)return;a.onRefresh(function(){i(),n.innerHTML=e.render(document.getElementById(a.templateId).innerHTML,h),o("addEventListener")}),h.$refresh()}}window.router=s,window.addEventListener("hashchange",s),window.addEventListener("load",s),window.route=function(e,r,n){var o=[],i=null;"function"==typeof r&&(n=r,r=null),void 0===n&&(n=function(){}),e.indexOf(":")>-1&&(i=e),Object.defineProperty(n.prototype,"$on",{value:a.on}),Object.defineProperty(n.prototype,"$refresh",{value:a.refresh.bind(void 0,o)}),Object.defineProperty(n.prototype,"$set",{value:a.set}),Object.defineProperty(n.prototype,"$get",{value:a.get}),t[e]={templateId:r,controller:n,onRefresh:o.push.bind(o),regex:i,params:{}}}}(Mustache);
 	/** Router **/
-
-
     route('/', function(){
-    	var self = this;
-    	this.template = $.ajax({url : "components/home.html"});
-    	console.log(this.template);
+		this.template = $.ajax({url : "./components/home.html"});
+		this.$data("GET", "./data/data.json");
     });
     route('/products/:id/tables/:id', function(){
     	this.template = "<h1>{{heading}}</h1>";
     	this.heading="zzz";
+		
     	var id = this.$get("id");
     });
     route('/products/:id/:action', function(){
@@ -83,7 +81,7 @@
     	console.log("params", this.$get("params"));
     });
     route('/page1', function () {
-    	this.template = $.ajax({url : "components/bacon.html"});
+    	this.template = $.ajax({url : "./components/bacon.html"});
 		this.greeting = 'Bacon getter';
 		this.moreText = 'More Bacon...';
 		this.counter = 1;
@@ -96,7 +94,7 @@
     });
     route('/page2', function () {
     	this.template = document.getElementById("template2").innerHTML;
-      this.heading = 'I\'m page two!';
+		this.heading = 'I\'m page two!';
     });
     route('*', function(){
     	this.template= document.getElementById("error404").innerHTML;
